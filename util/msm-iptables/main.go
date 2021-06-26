@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/coreos/go-iptables/iptables"
@@ -24,21 +23,24 @@ var rootCmd = &cobra.Command{
 			handleErrorWithCode(err, 1)
 		}
 
-		noRedirDestAddrRuleSpec := fmt.Sprintf("-d %s -j RETURN", viper.GetString(noRedirectDestAddr))
-		err = ipt.Append("nat", "OUTPUT", noRedirDestAddrRuleSpec)
+		//iptables -t nat -A OUTPUT -d 127.0.0.0/8 -j RETURN
+		noRedirDestAddrRuleSpec := []string{"-d", viper.GetString(noRedirectDestAddr), "-j", "RETURN"}
+		err = ipt.Append("nat", "OUTPUT", noRedirDestAddrRuleSpec...)
 		if err != nil {
 			handleErrorWithCode(err, 1)
 		}
 
-		uidRulespec := fmt.Sprintf("-p tcp -m owner --uid-owner %s -j RETURN", viper.GetString(proxyUID))
-		err = ipt.Append("nat", "OUTPUT", uidRulespec)
+		//iptables -t nat -A OUTPUT -p tcp -m owner --uid-owner 1337 -j RETURN
+		uidRulespec := []string{"-p", "tcp", "-m", "owner", "--uid-owner", viper.GetString(proxyUID), "-j", "RETURN"}
+		err = ipt.Append("nat", "OUTPUT", uidRulespec...)
 		if err != nil {
 			handleErrorWithCode(err, 1)
 		}
 
-		msmProxyPortRulespec := fmt.Sprintf("-p tcp --dport %s -j %s --to-ports %s", defaultRTSPPort,
-			viper.GetString(msmProxyPort), viper.GetString(proxyUID))
-		err = ipt.Append("nat", "OUTPUT", msmProxyPortRulespec)
+		//iptables -t nat -A OUTPUT -p tcp --dport 554 -j REDIRECT --to-ports 8554
+		msmProxyPortRulespec := []string{"-p", "tcp", "--dport", defaultRTSPPort, "-j", redirectModeREDIRECT,
+			"--to-ports", viper.GetString(msmProxyPort)}
+		err = ipt.Append("nat", "OUTPUT", msmProxyPortRulespec...)
 		if err != nil {
 			handleErrorWithCode(err, 1)
 		}

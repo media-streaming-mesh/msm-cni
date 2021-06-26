@@ -3,6 +3,7 @@ package cni
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/containernetworking/cni/pkg/skel"
@@ -43,6 +44,21 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 
 // CmdAdd is called for pod ADD requests
 func CmdAdd(args *skel.CmdArgs) error {
+	// open a file
+	f, err := os.OpenFile("/var/log/testlogrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		fmt.Printf("error opening file: %v", err)
+	}
+	// don't forget to close it
+	defer f.Close()
+
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// Output to stderr instead of stdout, could also be a file.
+	log.SetOutput(f)
+
+	log.Infof("got into cmdadd")
 	// Defer a panic recover, so that in case if panic we can still return
 	// a proper error to the runtime.
 	defer func() {
@@ -51,11 +67,15 @@ func CmdAdd(args *skel.CmdArgs) error {
 		}
 	}()
 
+	log.Infof("before parse")
+
 	conf, err := parseConfig(args.StdinData)
 	if err != nil {
 		log.Errorf("error parsing msm-cni cmdAdd config: %v", err)
 		return err
 	}
+
+	log.Infof("after parse")
 
 	var loggedPrevResult interface{}
 	if conf.PrevResult == nil {
@@ -115,8 +135,8 @@ func CmdAdd(args *skel.CmdArgs) error {
 				return err
 			}
 
-			if len(podInfo.Containers) > 1 {
-				log.Debugf("Found containers %v", podInfo.Containers)
+			if len(podInfo.Containers) >= 1 {
+				log.Infof("Found containers %v", podInfo.Containers)
 
 				// check annotations before invoking redirect commands
 				if _, ok := podInfo.Annotations[sidecarAnnotationKey]; !ok {

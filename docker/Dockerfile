@@ -10,4 +10,4 @@ COPY installer /usr/local/bin/
 
 ENV PATH=$PATH:/opt/cni/bin
 WORKDIR /opt/cni/bin
-CMD ["/usr/local/bin/install"]
+CMD ["/usr/local/bin/installer"]

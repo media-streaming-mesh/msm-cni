@@ -39,8 +39,8 @@ type PluginConf struct {
 	RuntimeConfig *struct{} `json:"runtimeConfig"`
 
 	// Previous result, when called in the context of a chained plugin.
-	RawPrevResult *map[string]interface{} `json:"rawPrevResult"`
-	PrevResult    *current.Result         `json:"prevResult"`
+	RawPrevResult *map[string]interface{} `json:"prevResult"`
+	PrevResult    *current.Result         `json:"-"`
 
 	// Plugin-specific flags
 	LogLevel   string     `json:"logLevel"`
@@ -110,7 +110,13 @@ func getKubePodInfo(client *kubernetes.Clientset, podName, podNamespace string) 
 		ProxyEnvironments: make(map[string]string),
 	}
 
-	// when annotations we could do smart things here
+	for _, initContainer := range pod.Spec.InitContainers {
+		podInfo.InitContainers[initContainer.Name] = struct{}{}
+	}
+	for containerIdx, container := range pod.Spec.Containers {
+		log.Debugf("Inspecting container, pod=%s, container=%s", pod, podName)
+		podInfo.Containers[containerIdx] = container.Name
+	}
 
 	return podInfo, nil
 }
