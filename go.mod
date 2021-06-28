@@ -1,6 +1,6 @@
 module github.com/media-streaming-mesh/msm-cni
 
-go 1.15
+go 1.16
 
 require (
 	github.com/containernetworking/cni v0.8.1
