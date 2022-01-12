@@ -16,3 +16,6 @@
 
 # Goland specific directories
 .idea/
+
+# OS specific files
+.DS_store
