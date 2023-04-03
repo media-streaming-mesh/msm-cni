@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM --platform=$BUILDPLATFORM golang:1.17 as builder
+FROM --platform=$BUILDPLATFORM golang:1.19 as builder
 
 WORKDIR /workspace
 
@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
     GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o msm-iptables util/msm-iptables/main.go util/msm-iptables/constants.go
 
-FROM --platform=$TARGETPLATFORM ubuntu
+FROM --platform=$TARGETPLATFORM ubuntu:focal
 
 LABEL description="MSM CNI plugin installer."
 
