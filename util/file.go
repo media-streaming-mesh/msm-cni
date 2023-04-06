@@ -97,7 +97,7 @@ func Exists(name string) bool {
 
 const (
 	// PrivateFileMode grants owner to read/write a file.
-	PrivateFileMode = 0600
+	PrivateFileMode = 0o600
 )
 
 // IsDirWriteable checks if dir is writable by writing and removing a file

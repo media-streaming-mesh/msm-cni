@@ -22,13 +22,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/media-streaming-mesh/msm-cni/internal/install"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/media-streaming-mesh/msm-cni/internal/install"
 )
 
 // Entry point for CNI installer
 func main() {
-
 	ctx, cancel := context.WithCancel(context.Background())
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)

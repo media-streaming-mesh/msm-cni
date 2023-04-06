@@ -33,29 +33,30 @@ var rootCmd = &cobra.Command{
 	Long:   "msm-iptables is responsible for setting up port forwarding for an MSM Sidecar.",
 	PreRun: bindFlags,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		ipt, err := iptables.New()
 		if err != nil {
 			handleErrorWithCode(err, 1)
 		}
 
-		//iptables -t nat -A OUTPUT -d 127.0.0.0/8 -j RETURN
+		// iptables -t nat -A OUTPUT -d 127.0.0.0/8 -j RETURN
 		noRedirDestAddrRuleSpec := []string{"-d", viper.GetString(noRedirectDestAddr), "-j", "RETURN"}
 		err = ipt.Append("nat", "OUTPUT", noRedirDestAddrRuleSpec...)
 		if err != nil {
 			handleErrorWithCode(err, 1)
 		}
 
-		//iptables -t nat -A OUTPUT -p tcp -m owner --uid-owner 1337 -j RETURN
+		// iptables -t nat -A OUTPUT -p tcp -m owner --uid-owner 1337 -j RETURN
 		uidRulespec := []string{"-p", "tcp", "-m", "owner", "--uid-owner", viper.GetString(proxyUID), "-j", "RETURN"}
 		err = ipt.Append("nat", "OUTPUT", uidRulespec...)
 		if err != nil {
 			handleErrorWithCode(err, 1)
 		}
 
-		//iptables -t nat -A OUTPUT -p tcp --dport 554 -j REDIRECT --to-ports 8554
-		msmProxyPortRulespec := []string{"-p", "tcp", "--dport", defaultRTSPPort, "-j", redirectModeREDIRECT,
-			"--to-ports", viper.GetString(msmProxyPort)}
+		// iptables -t nat -A OUTPUT -p tcp --dport 554 -j REDIRECT --to-ports 8554
+		msmProxyPortRulespec := []string{
+			"-p", "tcp", "--dport", defaultRTSPPort, "-j", redirectModeREDIRECT,
+			"--to-ports", viper.GetString(msmProxyPort),
+		}
 		err = ipt.Append("nat", "OUTPUT", msmProxyPortRulespec...)
 		if err != nil {
 			handleErrorWithCode(err, 1)
@@ -80,7 +81,6 @@ func handleErrorWithCode(err error, code int) {
 
 // Any viper mutation and binding should be placed in `PreRun` since they should be dynamically bound to the subcommand being executed.
 func bindFlags(cmd *cobra.Command, args []string) {
-
 	if err := viper.BindPFlag(msmProxyPort, cmd.Flags().Lookup(msmProxyPort)); err != nil {
 		handleError(err)
 	}
