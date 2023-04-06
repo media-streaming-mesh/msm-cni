@@ -30,8 +30,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/media-streaming-mesh/msm-cni/util"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/media-streaming-mesh/msm-cni/util"
 )
 
 var rootCmd = &cobra.Command{
@@ -236,7 +237,7 @@ func (in *Installer) Cleanup() error {
 			if err != nil {
 				return err
 			}
-			if err = util.AtomicWrite(in.cniConfigFilepath, cniConfig, os.FileMode(0644)); err != nil {
+			if err = util.AtomicWrite(in.cniConfigFilepath, cniConfig, os.FileMode(0o644)); err != nil {
 				return err
 			}
 		} else {

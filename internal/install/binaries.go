@@ -21,8 +21,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/media-streaming-mesh/msm-cni/util"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/media-streaming-mesh/msm-cni/util"
 )
 
 func copyBinaries(srcDir string, targetDirs []string, updateBinaries bool, skipBinaries []string) error {

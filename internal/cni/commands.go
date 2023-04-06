@@ -61,7 +61,7 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 // CmdAdd is called for pod ADD requests
 func CmdAdd(args *skel.CmdArgs) error {
 	// open a file
-	f, err := os.OpenFile("/var/log/testlogrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	f, err := os.OpenFile("/var/log/testlogrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
 	if err != nil {
 		fmt.Printf("error opening file: %v", err)
 	}

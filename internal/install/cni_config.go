@@ -148,7 +148,7 @@ func writeCNIConfig(ctx context.Context, cniConfig []byte, cfg pluginConfig) (st
 		}
 	}
 
-	if err = util.AtomicWrite(cniConfigFilepath, cniConfig, os.FileMode(0644)); err != nil {
+	if err = util.AtomicWrite(cniConfigFilepath, cniConfig, os.FileMode(0o644)); err != nil {
 		return "", err
 	}
 
