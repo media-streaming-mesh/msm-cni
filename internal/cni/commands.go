@@ -69,7 +69,6 @@ func CmdAdd(args *skel.CmdArgs) error {
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
-
 		}
 	}(f)
 

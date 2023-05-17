@@ -33,7 +33,7 @@ import (
 
 var (
 	nsSetupBinDir = "/opt/cni/bin"
-	//sidecarAnnotationKey   = "sidecar.mediastreamingmesh.io/inject"
+	// sidecarAnnotationKey   = "sidecar.mediastreamingmesh.io/inject"
 	interceptRuleMgrType   = defInterceptRuleMgrType
 	podRetrievalMaxRetries = 30
 	podRetrievalInterval   = 1 * time.Second
