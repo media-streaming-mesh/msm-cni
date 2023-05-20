@@ -33,10 +33,13 @@ import (
 
 var (
 	nsSetupBinDir          = "/opt/cni/bin"
-	sidecarAnnotationKey   = "sidecar.mediastreamingmesh.io/inject"
 	interceptRuleMgrType   = defInterceptRuleMgrType
 	podRetrievalMaxRetries = 30
 	podRetrievalInterval   = 1 * time.Second
+)
+
+const (
+	msmLabelKey = "sidecar.mediastreamingmesh.io/inject"
 )
 
 // Kubernetes a K8s specific struct to hold config
@@ -67,10 +70,10 @@ type PluginConf struct {
 // The field names need to match exact keys in kubelet args for unmarshalling
 type KubernetesArgs struct {
 	types.CommonArgs
-	IP                         net.IP
-	K8S_POD_NAME               types.UnmarshallableString
-	K8S_POD_NAMESPACE          types.UnmarshallableString
-	K8S_POD_INFRA_CONTAINER_ID types.UnmarshallableString
+	IP                     net.IP
+	K8sPodName             types.UnmarshallableString
+	K8sPodNamespace        types.UnmarshallableString
+	K8sPodInfraContainerId types.UnmarshallableString
 }
 
 // PodInfo holds the information of a Kubernetes pod
@@ -121,7 +124,7 @@ func getKubePodInfo(client *kubernetes.Clientset, podName, podNamespace string) 
 	podInfo := &PodInfo{
 		InitContainers:    make(map[string]struct{}),
 		Containers:        make([]string, len(pod.Spec.Containers)),
-		Labels:            pod.Labels,
+		Labels:            pod.ObjectMeta.Labels,
 		Annotations:       pod.Annotations,
 		ProxyEnvironments: make(map[string]string),
 	}

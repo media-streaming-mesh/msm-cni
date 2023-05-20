@@ -60,19 +60,9 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 
 // CmdAdd is called for pod ADD requests
 func CmdAdd(args *skel.CmdArgs) error {
-	// open a file
-	f, err := os.OpenFile("/var/log/testlogrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
-	if err != nil {
-		fmt.Printf("error opening file: %v", err)
-	}
-	// don't forget to close it
-	defer f.Close()
-
 	// Log as JSON instead of the default ASCII formatter.
 	log.SetFormatter(&log.JSONFormatter{})
-
-	// Output to stderr instead of stdout, could also be a file.
-	log.SetOutput(f)
+	log.SetOutput(os.Stdout) // Set output to standard output instead of a file
 
 	log.Infof("got into cmdadd")
 	// Defer a panic recover, so that in case if panic we can still return
@@ -118,11 +108,11 @@ func CmdAdd(args *skel.CmdArgs) error {
 	}
 
 	// Check if the workload is running under Kubernetes.
-	if string(k8sArgs.K8S_POD_NAMESPACE) != "" && string(k8sArgs.K8S_POD_NAME) != "" {
+	if string(k8sArgs.K8sPodNamespace) != "" && string(k8sArgs.K8sPodName) != "" {
 		excludePod := false
 		// check if pod belongs to an excluded namespace defined in the plugin configuration
 		for _, excludeNs := range conf.Kubernetes.ExcludeNamespaces {
-			if string(k8sArgs.K8S_POD_NAMESPACE) == excludeNs {
+			if string(k8sArgs.K8sPodNamespace) == excludeNs {
 				excludePod = true
 				break
 			}
@@ -138,7 +128,7 @@ func CmdAdd(args *skel.CmdArgs) error {
 
 			podInfo := &PodInfo{}
 			for retry := 1; retry <= podRetrievalMaxRetries; retry++ {
-				podInfo, err = getKubePodInfo(client, string(k8sArgs.K8S_POD_NAME), string(k8sArgs.K8S_POD_NAMESPACE))
+				podInfo, err = getKubePodInfo(client, string(k8sArgs.K8sPodName), string(k8sArgs.K8sPodNamespace))
 				if err == nil {
 					break
 				}
@@ -154,9 +144,9 @@ func CmdAdd(args *skel.CmdArgs) error {
 			if len(podInfo.Containers) >= 1 {
 				log.Infof("Found containers %v", podInfo.Containers)
 
-				// check annotations before invoking redirect commands
-				if _, ok := podInfo.Annotations[sidecarAnnotationKey]; !ok {
-					log.Infof("Pod %s excluded - no sidecar annotation", string(k8sArgs.K8S_POD_NAME))
+				// check annotations/labels before invoking redirect commands
+				if _, ok := podInfo.Labels[msmLabelKey]; !ok {
+					log.Infof("Pod %s excluded - no sidecar annotation/label", string(k8sArgs.K8sPodName))
 					excludePod = true
 				}
 
@@ -202,13 +192,13 @@ func CmdAdd(args *skel.CmdArgs) error {
 }
 
 // CmdGet is called for pod Get requests
-func CmdGet(args *skel.CmdArgs) error {
+func CmdGet(*skel.CmdArgs) error {
 	log.Info("CmdGet not implemented")
 	return fmt.Errorf("CmdGet not implemented")
 }
 
 // cmdDel is called for pod DELETE requests
-func CmdDel(args *skel.CmdArgs) error {
-	// nothing to cleanup for msm-cni, everything is happening on pod level
+func CmdDel(*skel.CmdArgs) error {
+	// nothing to clean up for msm-cni, everything is happening on pod level
 	return nil
 }

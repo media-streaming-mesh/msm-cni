@@ -82,7 +82,7 @@ func init() {
 	registerStringParameter(CNIConfName, "", "Name of the CNI configuration file")
 	registerBooleanParameter(ChainedCNIPlugin, true, "Whether to install CNI plugin as a chained or standalone")
 	registerStringParameter(CNINetworkConfig, "", "CNI config template as a string")
-	registerStringParameter(LogLevel, "warn", "Fallback value for log level in CNI config file, if not specified in helm template")
+	registerStringParameter(LogLevel, "debug", "Fallback value for log level in CNI config file, if not specified in helm template")
 
 	// Not configurable in CNI helm charts
 	registerStringParameter(MountedCNINetDir, "/host/etc/cni/net.d", "Directory on the container where CNI networks are installed")
