@@ -60,23 +60,9 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 
 // CmdAdd is called for pod ADD requests
 func CmdAdd(args *skel.CmdArgs) error {
-	// open a file
-	f, err := os.OpenFile("/var/log/testlogrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o666)
-	if err != nil {
-		fmt.Printf("error opening file: %v", err)
-	}
-	// don't forget to close it
-	defer func(f *os.File) {
-		err := f.Close()
-		if err != nil {
-		}
-	}(f)
-
 	// Log as JSON instead of the default ASCII formatter.
 	log.SetFormatter(&log.JSONFormatter{})
-
-	// Output to stderr instead of stdout, could also be a file.
-	log.SetOutput(f)
+	log.SetOutput(os.Stdout) // Set output to standard output instead of a file
 
 	log.Infof("got into cmdadd")
 	// Defer a panic recover, so that in case if panic we can still return

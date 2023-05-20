@@ -32,8 +32,7 @@ import (
 )
 
 var (
-	nsSetupBinDir = "/opt/cni/bin"
-	// sidecarAnnotationKey   = "sidecar.mediastreamingmesh.io/inject"
+	nsSetupBinDir          = "/opt/cni/bin"
 	interceptRuleMgrType   = defInterceptRuleMgrType
 	podRetrievalMaxRetries = 30
 	podRetrievalInterval   = 1 * time.Second
@@ -125,7 +124,7 @@ func getKubePodInfo(client *kubernetes.Clientset, podName, podNamespace string) 
 	podInfo := &PodInfo{
 		InitContainers:    make(map[string]struct{}),
 		Containers:        make([]string, len(pod.Spec.Containers)),
-		Labels:            pod.Labels,
+		Labels:            pod.ObjectMeta.Labels,
 		Annotations:       pod.Annotations,
 		ProxyEnvironments: make(map[string]string),
 	}
