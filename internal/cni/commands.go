@@ -24,7 +24,7 @@ import (
 
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/cni/pkg/types/current"
+	types100 "github.com/containernetworking/cni/pkg/types/100"
 	"github.com/containernetworking/cni/pkg/version"
 	log "github.com/sirupsen/logrus"
 )
@@ -48,7 +48,7 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 			return nil, fmt.Errorf("could not parse prevResult: %v", err)
 		}
 		conf.RawPrevResult = nil
-		conf.PrevResult, err = current.NewResultFromResult(res)
+		conf.PrevResult, err = types100.NewResultFromResult(res)
 		if err != nil {
 			return nil, fmt.Errorf("could not convert result to current version: %v", err)
 		}
@@ -178,10 +178,10 @@ func CmdAdd(args *skel.CmdArgs) error {
 		log.Infof("Pod is not running under Kubernetes")
 	}
 
-	var result *current.Result
+	var result *types100.Result
 	if conf.PrevResult == nil {
-		result = &current.Result{
-			CNIVersion: current.ImplementedSpecVersion,
+		result = &types100.Result{
+			CNIVersion: types100.ImplementedSpecVersion,
 		}
 	} else {
 		// Pass through the result for the next plugin
