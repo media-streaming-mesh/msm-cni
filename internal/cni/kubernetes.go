@@ -22,7 +22,7 @@ import (
 	"time"
 
 	"github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/cni/pkg/types/current"
+	types100 "github.com/containernetworking/cni/pkg/types/100"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -59,7 +59,7 @@ type PluginConf struct {
 
 	// Previous result, when called in the context of a chained plugin.
 	RawPrevResult *map[string]interface{} `json:"prevResult"`
-	PrevResult    *current.Result         `json:"-"`
+	PrevResult    *types100.Result         `json:"-"`
 
 	// Plugin-specific flags
 	LogLevel   string     `json:"logLevel"`
