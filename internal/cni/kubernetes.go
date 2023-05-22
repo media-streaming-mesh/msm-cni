@@ -59,7 +59,7 @@ type PluginConf struct {
 
 	// Previous result, when called in the context of a chained plugin.
 	RawPrevResult *map[string]interface{} `json:"prevResult"`
-	PrevResult    *types100.Result         `json:"-"`
+	PrevResult    *types100.Result        `json:"-"`
 
 	// Plugin-specific flags
 	LogLevel   string     `json:"logLevel"`
