@@ -28,8 +28,6 @@ import (
 	"github.com/media-streaming-mesh/msm-cni/internal/install"
 )
 
-var logger *log.Logger
-
 // Entry point for CNI installer
 func main() {
 	log.SetOutput(os.Stdout)

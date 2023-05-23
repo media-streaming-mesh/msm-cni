@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -94,7 +93,7 @@ func createCNIConfigFile(ctx context.Context, cfg *Config, saToken string) (stri
 
 func readCNIConfigTemplate(template cniConfigTemplate) ([]byte, error) {
 	if util.Exists(template.cniNetworkConfigFile) {
-		cniConfig, err := ioutil.ReadFile(template.cniNetworkConfigFile)
+		cniConfig, err := os.ReadFile(template.cniNetworkConfigFile)
 		if err != nil {
 			return nil, err
 		}
@@ -141,7 +140,7 @@ func writeCNIConfig(ctx context.Context, cniConfig []byte, cfg pluginConfig) (st
 			return "", fmt.Errorf("CNI config file %s removed during configuration", cniConfigFilepath)
 		}
 		// This section overwrites an existing plugins list entry for msm-cni
-		existingCNIConfig, err := ioutil.ReadFile(cniConfigFilepath)
+		existingCNIConfig, err := os.ReadFile(cniConfigFilepath)
 		if err != nil {
 			return "", err
 		}
