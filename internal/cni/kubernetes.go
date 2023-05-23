@@ -63,6 +63,7 @@ type PluginConf struct {
 
 	// Plugin-specific flags
 	LogLevel   string     `json:"logLevel"`
+	LogType    string     `json:"logType"`
 	Kubernetes Kubernetes `json:"kubernetes"`
 }
 
