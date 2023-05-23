@@ -20,6 +20,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	log "github.com/sirupsen/logrus"
@@ -27,8 +28,36 @@ import (
 	"github.com/media-streaming-mesh/msm-cni/internal/install"
 )
 
+var logger *log.Logger
+
 // Entry point for CNI installer
 func main() {
+	log.SetOutput(os.Stdout)
+
+	logFormat := os.Getenv("LOG_TYPE")
+	switch strings.ToLower(logFormat) {
+	case "json":
+		log.SetFormatter(&log.JSONFormatter{
+			TimestampFormat: "2006-01-02 15:04:05",
+			PrettyPrint:     true,
+		})
+	default:
+		log.SetFormatter(&log.TextFormatter{})
+	}
+
+	logLevel := os.Getenv("LOG_LEVEL")
+	switch logLevel {
+	case "debug":
+		log.SetLevel(log.DebugLevel)
+	case "info":
+		log.SetLevel(log.InfoLevel)
+	case "warn":
+		log.SetLevel(log.WarnLevel)
+	case "error":
+		log.SetLevel(log.ErrorLevel)
+	default:
+		log.SetLevel(log.InfoLevel)
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)

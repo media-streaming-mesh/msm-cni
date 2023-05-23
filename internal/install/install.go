@@ -83,6 +83,7 @@ func init() {
 	registerBooleanParameter(ChainedCNIPlugin, true, "Whether to install CNI plugin as a chained or standalone")
 	registerStringParameter(CNINetworkConfig, "", "CNI config template as a string")
 	registerStringParameter(LogLevel, "debug", "Fallback value for log level in CNI config file, if not specified in helm template")
+	registerStringParameter(LogType, "json", "Fallback value for log level in CNI config file, if not specified in helm template")
 
 	// Not configurable in CNI helm charts
 	registerStringParameter(MountedCNINetDir, "/host/etc/cni/net.d", "Directory on the container where CNI networks are installed")
@@ -133,6 +134,7 @@ func constructConfig() (*Config, error) {
 		CNINetworkConfig:     viper.GetString(CNINetworkConfig),
 
 		LogLevel:           viper.GetString(LogLevel),
+		LogType:            viper.GetString(LogType),
 		KubeconfigFilename: viper.GetString(KubeconfigFilename),
 		KubeconfigMode:     viper.GetInt(KubeconfigMode),
 		KubeCAFile:         viper.GetString(KubeCAFile),
