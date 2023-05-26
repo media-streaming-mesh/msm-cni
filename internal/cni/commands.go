@@ -24,7 +24,7 @@ import (
 
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/cni/pkg/types/current"
+	types100 "github.com/containernetworking/cni/pkg/types/100"
 	"github.com/containernetworking/cni/pkg/version"
 	log "github.com/sirupsen/logrus"
 )
@@ -48,7 +48,7 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 			return nil, fmt.Errorf("could not parse prevResult: %v", err)
 		}
 		conf.RawPrevResult = nil
-		conf.PrevResult, err = current.NewResultFromResult(res)
+		conf.PrevResult, err = types100.NewResultFromResult(res)
 		if err != nil {
 			return nil, fmt.Errorf("could not convert result to current version: %v", err)
 		}
@@ -75,9 +75,7 @@ func CmdAdd(args *skel.CmdArgs) error {
 
 	// Log as JSON instead of the default ASCII formatter.
 	log.SetFormatter(&log.JSONFormatter{})
-
-	// Output to stderr instead of stdout, could also be a file.
-	log.SetOutput(f)
+	log.SetOutput(os.Stdout) // Set output to standard output instead of a file
 
 	log.Infof("got into cmdadd")
 	// Defer a panic recover, so that in case if panic we can still return
@@ -123,11 +121,11 @@ func CmdAdd(args *skel.CmdArgs) error {
 	}
 
 	// Check if the workload is running under Kubernetes.
-	if string(k8sArgs.K8S_POD_NAMESPACE) != "" && string(k8sArgs.K8S_POD_NAME) != "" {
+	if string(k8sArgs.K8sPodNamespace) != "" && string(k8sArgs.K8sPodName) != "" {
 		excludePod := false
 		// check if pod belongs to an excluded namespace defined in the plugin configuration
 		for _, excludeNs := range conf.Kubernetes.ExcludeNamespaces {
-			if string(k8sArgs.K8S_POD_NAMESPACE) == excludeNs {
+			if string(k8sArgs.K8sPodNamespace) == excludeNs {
 				excludePod = true
 				break
 			}
@@ -143,7 +141,7 @@ func CmdAdd(args *skel.CmdArgs) error {
 
 			podInfo := &PodInfo{}
 			for retry := 1; retry <= podRetrievalMaxRetries; retry++ {
-				podInfo, err = getKubePodInfo(client, string(k8sArgs.K8S_POD_NAME), string(k8sArgs.K8S_POD_NAMESPACE))
+				podInfo, err = getKubePodInfo(client, string(k8sArgs.K8sPodName), string(k8sArgs.K8sPodNamespace))
 				if err == nil {
 					break
 				}
@@ -193,10 +191,10 @@ func CmdAdd(args *skel.CmdArgs) error {
 		log.Infof("Pod is not running under Kubernetes")
 	}
 
-	var result *current.Result
+	var result *types100.Result
 	if conf.PrevResult == nil {
-		result = &current.Result{
-			CNIVersion: current.ImplementedSpecVersion,
+		result = &types100.Result{
+			CNIVersion: types100.ImplementedSpecVersion,
 		}
 	} else {
 		// Pass through the result for the next plugin
@@ -207,13 +205,13 @@ func CmdAdd(args *skel.CmdArgs) error {
 }
 
 // CmdGet is called for pod Get requests
-func CmdGet(args *skel.CmdArgs) error {
+func CmdGet(*skel.CmdArgs) error {
 	log.Info("CmdGet not implemented")
 	return fmt.Errorf("CmdGet not implemented")
 }
 
 // cmdDel is called for pod DELETE requests
-func CmdDel(args *skel.CmdArgs) error {
-	// nothing to cleanup for msm-cni, everything is happening on pod level
+func CmdDel(*skel.CmdArgs) error {
+	// nothing to clean up for msm-cni, everything is happening on pod level
 	return nil
 }

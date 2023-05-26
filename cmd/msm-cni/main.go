@@ -28,6 +28,5 @@ import (
 
 func main() {
 	log.SetOutput(os.Stdout)
-
 	skel.PluginMain(cni.CmdAdd, cni.CmdGet, cni.CmdDel, version.All, "msm-cni")
 }
