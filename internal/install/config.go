@@ -39,6 +39,8 @@ type Config struct {
 
 	// Logging level
 	LogLevel string
+	// Logging Format
+	LogType string
 	// Name of the kubeconfig file used by the CNI plugin
 	KubeconfigFilename string
 	// The file mode to set when creating the kubeconfig file
@@ -78,6 +80,7 @@ func (c *Config) String() string {
 	b.WriteString("CNINetworkConfig: " + c.CNINetworkConfig + "\n")
 
 	b.WriteString("LogLevel: " + c.LogLevel + "\n")
+	b.WriteString("LogType: " + c.LogType + "\n")
 	b.WriteString("KubeconfigFilename: " + c.KubeconfigFilename + "\n")
 	b.WriteString("KubeconfigMode: " + fmt.Sprintf("%#o", c.KubeconfigMode) + "\n")
 	b.WriteString("KubeCAFile: " + c.KubeCAFile + "\n")

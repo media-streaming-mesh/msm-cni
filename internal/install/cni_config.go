@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -48,6 +47,7 @@ type cniConfigVars struct {
 	cniNetDir          string
 	kubeconfigFilename string
 	logLevel           string
+	logType            string
 	k8sServiceHost     string
 	k8sServicePort     string
 	k8sNodeName        string
@@ -73,6 +73,7 @@ func getCNIConfigVars(cfg *Config) cniConfigVars {
 		cniNetDir:          cfg.CNINetDir,
 		kubeconfigFilename: cfg.KubeconfigFilename,
 		logLevel:           cfg.LogLevel,
+		logType:            cfg.LogType,
 		k8sServiceHost:     cfg.K8sServiceHost,
 		k8sServicePort:     cfg.K8sServicePort,
 		k8sNodeName:        cfg.K8sNodeName,
@@ -92,7 +93,7 @@ func createCNIConfigFile(ctx context.Context, cfg *Config, saToken string) (stri
 
 func readCNIConfigTemplate(template cniConfigTemplate) ([]byte, error) {
 	if util.Exists(template.cniNetworkConfigFile) {
-		cniConfig, err := ioutil.ReadFile(template.cniNetworkConfigFile)
+		cniConfig, err := os.ReadFile(template.cniNetworkConfigFile)
 		if err != nil {
 			return nil, err
 		}
@@ -112,6 +113,7 @@ func replaceCNIConfigVars(cniConfig []byte, vars cniConfigVars, saToken string) 
 	cniConfigStr := string(cniConfig)
 
 	cniConfigStr = strings.ReplaceAll(cniConfigStr, "__LOG_LEVEL__", vars.logLevel)
+	cniConfigStr = strings.ReplaceAll(cniConfigStr, "__LOG_Type__", vars.logType)
 	cniConfigStr = strings.ReplaceAll(cniConfigStr, "__KUBECONFIG_FILENAME__", vars.kubeconfigFilename)
 	cniConfigStr = strings.ReplaceAll(cniConfigStr, "__KUBECONFIG_FILEPATH__", filepath.Join(vars.cniNetDir, vars.kubeconfigFilename))
 	cniConfigStr = strings.ReplaceAll(cniConfigStr, "__KUBERNETES_SERVICE_HOST__", vars.k8sServiceHost)
@@ -138,7 +140,7 @@ func writeCNIConfig(ctx context.Context, cniConfig []byte, cfg pluginConfig) (st
 			return "", fmt.Errorf("CNI config file %s removed during configuration", cniConfigFilepath)
 		}
 		// This section overwrites an existing plugins list entry for msm-cni
-		existingCNIConfig, err := ioutil.ReadFile(cniConfigFilepath)
+		existingCNIConfig, err := os.ReadFile(cniConfigFilepath)
 		if err != nil {
 			return "", err
 		}

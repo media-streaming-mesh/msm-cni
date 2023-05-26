@@ -33,11 +33,12 @@ import (
 
 var (
 	nsSetupBinDir          = "/opt/cni/bin"
-	sidecarAnnotationKey   = "sidecar.mediastreamingmesh.io/inject"
 	interceptRuleMgrType   = defInterceptRuleMgrType
 	podRetrievalMaxRetries = 30
 	podRetrievalInterval   = 1 * time.Second
 )
+
+const msmSideCarLabel = "sidecar.mediastreamingmesh.io/inject"
 
 // Kubernetes a K8s specific struct to hold config
 type Kubernetes struct {
@@ -60,6 +61,7 @@ type PluginConf struct {
 
 	// Plugin-specific flags
 	LogLevel   string     `json:"logLevel"`
+	LogType    string     `json:"logType"`
 	Kubernetes Kubernetes `json:"kubernetes"`
 }
 
