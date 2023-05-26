@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// Defines the redirect object and operations.
+// Package cni Defines the redirect object and operations.
 package cni
 
 const (
