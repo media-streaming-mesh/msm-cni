@@ -154,9 +154,9 @@ func CmdAdd(args *skel.CmdArgs) error {
 			if len(podInfo.Containers) >= 1 {
 				log.Infof("Found containers %v", podInfo.Containers)
 
-				// check annotations before invoking redirect commands
-				if _, ok := podInfo.Annotations[sidecarAnnotationKey]; !ok {
-					log.Infof("Pod %s excluded - no sidecar annotation", string(k8sArgs.K8S_POD_NAME))
+				// check label before invoking redirect commands
+				if _, ok := podInfo.Labels[msmSideCarLabel]; !ok {
+					log.Infof("Pod %s excluded - no sidecar label", string(k8sArgs.K8S_POD_NAME))
 					excludePod = true
 				}
 
