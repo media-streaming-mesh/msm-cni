@@ -19,7 +19,6 @@ package install
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -82,7 +81,8 @@ func init() {
 	registerStringParameter(CNIConfName, "", "Name of the CNI configuration file")
 	registerBooleanParameter(ChainedCNIPlugin, true, "Whether to install CNI plugin as a chained or standalone")
 	registerStringParameter(CNINetworkConfig, "", "CNI config template as a string")
-	registerStringParameter(LogLevel, "warn", "Fallback value for log level in CNI config file, if not specified in helm template")
+	registerStringParameter(LogLevel, "debug", "Fallback value for log level in CNI config file, if not specified in helm template")
+	registerStringParameter(LogType, "json", "Fallback value for log format in CNI config file, if not specified in helm template")
 
 	// Not configurable in CNI helm charts
 	registerStringParameter(MountedCNINetDir, "/host/etc/cni/net.d", "Directory on the container where CNI networks are installed")
@@ -133,6 +133,7 @@ func constructConfig() (*Config, error) {
 		CNINetworkConfig:     viper.GetString(CNINetworkConfig),
 
 		LogLevel:           viper.GetString(LogLevel),
+		LogType:            viper.GetString(LogType),
 		KubeconfigFilename: viper.GetString(KubeconfigFilename),
 		KubeconfigMode:     viper.GetInt(KubeconfigMode),
 		KubeCAFile:         viper.GetString(KubeCAFile),
@@ -278,7 +279,7 @@ func readServiceAccountToken() (string, error) {
 		return "", fmt.Errorf("service account token file %s does not exist. Is this not running within a pod?", saToken)
 	}
 
-	token, err := ioutil.ReadFile(saToken)
+	token, err := os.ReadFile(saToken)
 	if err != nil {
 		return "", err
 	}

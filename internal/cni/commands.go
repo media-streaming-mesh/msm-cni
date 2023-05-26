@@ -66,13 +66,19 @@ func CmdAdd(args *skel.CmdArgs) error {
 		fmt.Printf("error opening file: %v", err)
 	}
 	// don't forget to close it
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Errorf("unable to close file %v", err)
+		}
+	}(f)
 
 	// Log as JSON instead of the default ASCII formatter.
 	log.SetFormatter(&log.JSONFormatter{})
 
 	// Output to stderr instead of stdout, could also be a file.
 	log.SetOutput(f)
+	log.SetOutput(os.Stdout)
 
 	log.Infof("got into cmdadd")
 	// Defer a panic recover, so that in case if panic we can still return
@@ -154,9 +160,9 @@ func CmdAdd(args *skel.CmdArgs) error {
 			if len(podInfo.Containers) >= 1 {
 				log.Infof("Found containers %v", podInfo.Containers)
 
-				// check annotations before invoking redirect commands
-				if _, ok := podInfo.Annotations[sidecarAnnotationKey]; !ok {
-					log.Infof("Pod %s excluded - no sidecar annotation", string(k8sArgs.K8S_POD_NAME))
+				// check label before invoking redirect commands
+				if _, ok := podInfo.Labels[msmSideCarLabel]; !ok {
+					log.Infof("Pod %s excluded - no sidecar label", string(k8sArgs.K8S_POD_NAME))
 					excludePod = true
 				}
 
