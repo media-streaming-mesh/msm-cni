@@ -69,7 +69,9 @@ func CmdAdd(args *skel.CmdArgs) error {
 	defer f.Close()
 
 	// Log as JSON instead of the default ASCII formatter.
-	log.SetFormatter(&log.JSONFormatter{})
+	log.SetFormatter(&log.JSONFormatter{
+		PrettyPrint: true,
+	})
 
 	// Output to stderr instead of stdout, could also be a file.
 	log.SetOutput(f)
