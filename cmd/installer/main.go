@@ -45,6 +45,8 @@ func main() {
 
 	logLevel := os.Getenv("LOG_LEVEL")
 	switch strings.ToLower(logLevel) {
+	case "trace":
+		log.SetLevel(log.TraceLevel)
 	case "debug":
 		log.SetLevel(log.DebugLevel)
 	case "info":
@@ -54,7 +56,7 @@ func main() {
 	case "error":
 		log.SetLevel(log.ErrorLevel)
 	default:
-		log.SetLevel(log.InfoLevel)
+		log.SetLevel(log.DebugLevel)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	sigChan := make(chan os.Signal, 1)
