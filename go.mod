@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/containernetworking/cni v1.1.2
-	github.com/coreos/go-iptables v0.6.0
+	github.com/coreos/go-iptables v0.7.0
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
