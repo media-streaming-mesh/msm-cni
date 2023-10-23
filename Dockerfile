@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
     GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o msm-iptables util/msm-iptables/main.go util/msm-iptables/constants.go
 
-FROM --platform=$TARGETPLATFORM ubuntu:focal
+FROM --platform=$TARGETPLATFORM ubuntu:22.04
 
 LABEL description="MSM CNI plugin installer."
 
