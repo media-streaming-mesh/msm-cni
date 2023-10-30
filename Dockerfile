@@ -19,15 +19,15 @@ ARG TARGETOS TARGETARCH
 # Build
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o msm-cni cmd/msm-cni/main.go
+    GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -a -o msm-cni cmd/msm-cni/main.go
 
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o installer cmd/installer/main.go
+    GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -a -o installer cmd/installer/main.go
 
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
-    GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o msm-iptables util/msm-iptables/main.go util/msm-iptables/constants.go
+    GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -a -o msm-iptables util/msm-iptables/main.go util/msm-iptables/constants.go
 
 FROM --platform=$TARGETPLATFORM ubuntu:22.04
 
