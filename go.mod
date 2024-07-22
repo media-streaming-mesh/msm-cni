@@ -3,7 +3,7 @@ module github.com/media-streaming-mesh/msm-cni
 go 1.22.3
 
 require (
-	github.com/containernetworking/cni v1.2.2
+	github.com/containernetworking/cni v1.2.3
 	github.com/coreos/go-iptables v0.7.0
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/pkg/errors v0.9.1
