@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	github.com/containernetworking/cni v1.2.3
-	github.com/coreos/go-iptables v0.7.0
+	github.com/coreos/go-iptables v0.8.0
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
