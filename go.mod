@@ -12,7 +12,6 @@ require (
 	github.com/spf13/viper v1.19.0
 	k8s.io/apimachinery v0.31.1
 	k8s.io/client-go v0.31.1
-)
 
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
