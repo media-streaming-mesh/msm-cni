@@ -1,6 +1,7 @@
 module github.com/media-streaming-mesh/msm-cni
 
-go 1.22.3
+go 1.23.0
+
 toolchain go1.23.4
 
 require (
